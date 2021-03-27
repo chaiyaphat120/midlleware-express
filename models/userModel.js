@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const bcrypt = require('bcrypt');
 const scheme = Schema(
     {
         name: { type: String, require: true, trim: true },
@@ -9,6 +10,12 @@ const scheme = Schema(
     },
     { collection: 'users', timestamps: true }
 )
+
+scheme.methods.encryptPassword = async function(password){
+    const salt = await bcrypt.genSalt(10)  //สุ่มอักขระ ไว้ผสมกับรหัส
+    const hahPassword = bcrypt.hash(password , salt)
+    return hahPassword
+}
 
 const user = mongoose.model('User', scheme)
 module.exports = user

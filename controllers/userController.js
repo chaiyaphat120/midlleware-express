@@ -1,10 +1,12 @@
 const User = require('../Models/userModel')
+const {encryptPasswordByBcrypt}  = require('../helpers/hahPassword.js') 
 exports.register = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body
         const user = new User()
         user.name = name
-        user.password = password
+        // user.password = await user.encryptPassword(password)  //เconst user = new User()
+        user.password = await encryptPasswordByBcrypt(password)  //เconst user = new User()
         user.email = email
         user.role = role
 
