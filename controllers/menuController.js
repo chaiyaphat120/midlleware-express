@@ -3,7 +3,6 @@ const Menu = require('../models/menuModel')
 exports.insert = async (req, res, next) => {
     try {
         const { name, price } = req.body
-        console.log({ name, price })
         const user = new Menu({
             name,
             price,

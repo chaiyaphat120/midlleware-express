@@ -3,6 +3,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const logger = require('morgan')
+const passport = require('passport')
 
 const { mongoose } = require('./configs/mongodb')
 
@@ -13,6 +14,9 @@ require('dotenv').config() //import .env
 const app = express()
 const server = require('http').createServer(app)
 mongoose //connect mongoDb
+
+//initialize passport
+passport.initialize()
 
 app.use(
     cors({
@@ -30,6 +34,8 @@ app.use(
 )
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
+
+
 
 const menuRouter = require('./routes/menuRoute')
 app.use('/menu', menuRouter)

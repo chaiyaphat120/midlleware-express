@@ -22,7 +22,6 @@ exports.register = async (req, res, next) => {
 
         //check email ซ้ำ
         const existEmail = await User.findOne({ email })
-        console.log(existEmail)
         if (existEmail) {
             const error = new Error('email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง') //.message จะได่ error คำนี้ email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง"  //error.message
             error.statusCode = 400
@@ -76,9 +75,9 @@ exports.login = async (req, res, next) => {
         const expires_in = jwt.decode(acess_token)
         res.status(200).json({
             acess_token,
-            expires_in: expires_in.exp,   //วันหมดอายุ
+            expires_in: expires_in.exp, //วันหมดอายุ
             message: 'ล็อกอินสำเร็จ',
-            token_type: "Bearer"
+            token_type: 'Bearer',
         })
     } catch (error) {
         next(error)
@@ -86,15 +85,28 @@ exports.login = async (req, res, next) => {
 }
 
 exports.me = async (req, res, next) => {
-    // try {
-    //     const { _id, name, email, role } = req.user
-    //     res.status(200).json({
-    //         user: {
-    //             _id,
-    //             name,
-    //             email,
-    //             role,
-    //         },
-    //     })
-    // } catch (error) {}
+    try {
+        const { _id, name, email, role } = req.user
+        res.status(200).json({
+            user: {
+                _id,
+                name,
+                email,
+                role,
+            },
+        })
+    } catch (error) {}
+}
+
+exports.findAll = async (req, res, next) => {
+    try {
+        const user = await User.find()
+        res.status(200).json({
+            data: user,
+        })
+    } catch (error) {
+        res.status(400).json({
+            error,
+        })
+    }
 }
