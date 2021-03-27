@@ -32,6 +32,9 @@ app.use(cookieParser())
 const menuRouter = require('./routes/menuRoute')
 app.use('/menu', menuRouter)
 
+const userRouter = require('./routes/userRoute')
+app.use('/user', userRouter)
+
 const port = process.env.PORT || 4000
 server.listen(port, () => {
     console.log(`server running on ${port}`)
