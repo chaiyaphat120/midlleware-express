@@ -18,7 +18,9 @@ app.use(
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
     })
 )
-app.use(logger('dev'))
+if (process.env.NODE_ENV === 'production') {
+    app.use(logger('dev'))
+}
 app.use(
     express.json({
         limit: '50mb',
@@ -29,8 +31,6 @@ app.use(cookieParser())
 
 const menuRouter = require('./routes/menuRoute')
 app.use('/menu', menuRouter)
-
-
 
 const port = process.env.PORT || 4000
 server.listen(port, () => {
