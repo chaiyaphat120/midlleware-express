@@ -23,7 +23,7 @@ exports.find = async (req, res, next) => {
     try {
         const user = await Menu.find()
         res.status(200).json({
-            data: user,
+            user,
         })
     } catch (error) {
         res.status(400).json({ error })
