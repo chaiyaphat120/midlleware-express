@@ -16,7 +16,8 @@ exports.register = async (req, res, next) => {
         }
 
         //check email ซ้ำ
-        const existEmail = await User.find({ email })
+        const existEmail = await User.findOne({ email })
+        console.log(existEmail)
         if (existEmail) {
             const error = new Error('email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง') //.message จะได่ error คำนี้ email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง"  //error.message
             error.statusCode = 400
