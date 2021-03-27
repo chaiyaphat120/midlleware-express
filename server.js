@@ -8,6 +8,9 @@ const { mongoose } = require('./configs/mongodb')
 
 require('dotenv').config() //import .env
 
+//import middleware  **ต้อง use ไว้ล่างสุด ก่อน export
+const {errorMiddleware} = require('./middleware/errorHandler')
+
 const app = express()
 const server = require('http').createServer(app)
 mongoose //connect mongoDb
@@ -40,4 +43,5 @@ server.listen(port, () => {
     console.log(`server running on ${port}`)
 })
 
+app.use(errorMiddleware)
 module.exports = app

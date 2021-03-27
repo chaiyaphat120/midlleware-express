@@ -1,13 +1,22 @@
 const User = require('../Models/userModel')
-const {encryptPasswordByBcrypt ,encryptPasswordByArgon2}  = require('../helpers/hahPassword.js') 
+const { encryptPasswordByBcrypt, encryptPasswordByArgon2 } = require('../helpers/hahPassword.js')
 exports.register = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body
         const user = new User()
+
+        //check email ซ้ำ
+        const existEmail = await User.find({ email })
+        if (existEmail) {
+            const error = new Error("email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง")  //.message จะได่ error คำนี้ email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง"  //error.message
+            error.statusCode = 400;
+            throw error  //โยนค่า errorไป catch เพื่อ next ต่อ
+        }
+
         user.name = name
-        // user.password = await user.encryptPassword(password)  //เconst user = new User()
-        // user.password = await encryptPasswordByBcrypt(password)  //เconst user = new User()
-        user.password = await encryptPasswordByArgon2(password)  //เconst user = new User()
+        // user.password = await user.encryptPassword(password)  //const user = new User()
+        // user.password = await encryptPasswordByBcrypt(password)  //const user = new User()
+        user.password = await encryptPasswordByArgon2(password) //const user = new User()
         user.email = email
         user.role = role
 
@@ -16,14 +25,13 @@ exports.register = async (req, res, next) => {
             message: 'ลงทะเบียนเรียบร้อยแล้ว!',
         })
     } catch (error) {
-        next(error)
+        next(error) //จะให้ next ไป error  เพราะ config ไว้หน้า server.js แล้ว
     }
 }
 
 exports.login = async (req, res, next) => {
     // try {
     //     const { email, password } = req.body
-
     //     //check ว่า มี email นี้หรือไม่
     //     const user = await User.findOne({ email })
     //     if (!user) {
@@ -31,7 +39,6 @@ exports.login = async (req, res, next) => {
     //         error.statusCode = 400
     //         throw error
     //     }
-
     //     //ตรวจสอบรหัสผ่านว่าตรงหรือบ้  ไม่ตรง(false) ให้ยืนค่า error ออกไป
     //     const isValid = await user.checkPassword(password)
     //     if (!isValid) {
@@ -47,7 +54,6 @@ exports.login = async (req, res, next) => {
     //     console.log('2')
     //     //decode วันหมดอายุ
     //     const expires_in = jwt.decode(token)
-
     //     res.status(200).json({
     //         access_token: token,
     //         expires_in: expires_in.exp,
