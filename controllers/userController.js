@@ -2,6 +2,10 @@ const User = require('../models/userModel')
 const { encryptPasswordByBcrypt, encryptPasswordByArgon2 } = require('../helpers/hahPassword.js')
 const { comparePasswordArgon2 } = require('../helpers/comparePassword.js')
 const { validationResult } = require('express-validator') //ไว้รับ error
+const { JWT_SECRETE } = require('../configs/index.js')
+
+const jwt = require('jsonwebtoken')
+
 exports.register = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body
@@ -45,12 +49,15 @@ exports.login = async (req, res, next) => {
     try {
         const { email, password } = req.body
         const user = await User.findOne({ email })
+        const { _id, role } = user
+
         //check ว่า มี emailใน ระบบ นี้หรือไม่
         if (!user) {
             const error = new Error('ไม่พบผู้ใช้งานในระบบ') //err.message
             error.statusCode = 400
             throw error
         }
+
         // ตรวจสอบ password ว่าตรงกันหรือไม่
         //argon ต้องส่งอันแรกเป็น hah pawword จาก store
         const isValid = await comparePasswordArgon2(user.password, password)
@@ -59,8 +66,19 @@ exports.login = async (req, res, next) => {
             error.statusCode = 404
             throw error
         }
+
+        //genarate jwt to response json
+        const prepareData = {
+            id: _id,
+            role,
+        }
+        const acess_token = jwt.sign(prepareData, JWT_SECRETE, { expiresIn: '5 days' })
+        const expires_in = jwt.decode(acess_token)
         res.status(200).json({
+            acess_token,
+            expires_in: expires_in.exp,   //วันหมดอายุ
             message: 'ล็อกอินสำเร็จ',
+            token_type: "Bearer"
         })
     } catch (error) {
         next(error)
