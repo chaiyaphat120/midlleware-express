@@ -12,4 +12,5 @@ const encryptPasswordByArgon2= async function (password) {
     return hahPassword
 }
 
-module.exports = { encryptPasswordByBcrypt  ,encryptPasswordByArgon2}
+
+module.exports = { encryptPasswordByBcrypt  ,encryptPasswordByArgon2 }
