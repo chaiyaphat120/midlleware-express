@@ -1,4 +1,4 @@
-const User = require('../Models/userModel')
+const User = require('../models/userModel')
 const { encryptPasswordByBcrypt, encryptPasswordByArgon2 } = require('../helpers/hahPassword.js')
 const { validationResult } = require('express-validator') //ไว้รับ error
 exports.register = async (req, res, next) => {
