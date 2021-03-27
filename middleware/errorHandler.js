@@ -1,11 +1,10 @@
-module.exports.errorMiddleware = (err , req ,res ,next)=>{
-    const {statusCode , message , validation} = err
-    const status_code = statusCode || 500
-    res.status(statusCode).json({
+module.exports.errorValidator = (err, req, res, next) => {
+    const statusCode = err.statusCode || 500
+    return res.status(statusCode).json({
         error:{
-            status_code,
-            message,
-            validation
+            status_code : statusCode,
+            message: err.message,
+            validation : err.validation
         }
     })
 }

@@ -1,16 +1,26 @@
 const User = require('../Models/userModel')
 const { encryptPasswordByBcrypt, encryptPasswordByArgon2 } = require('../helpers/hahPassword.js')
+const { validationResult } = require('express-validator') //ไว้รับ error
 exports.register = async (req, res, next) => {
     try {
         const { name, email, password, role } = req.body
         const user = new User()
+        //validation
+        const errorsFormLib = validationResult(req) //error แนบ มากับ req
+        if (!errorsFormLib.isEmpty()) {
+            // return res.status(422).json({ error: errors.array() })  //แบบเก่า
+            const error = new Error('ข้อมูลที่รับมาไม่ถูกต้อง')
+            error.statusCode = 422
+            error.validation = errorsFormLib.array() //ส่ง error ที่ทำมาจาก express-validator'
+            throw error
+        }
 
         //check email ซ้ำ
         const existEmail = await User.find({ email })
         if (existEmail) {
-            const error = new Error("email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง")  //.message จะได่ error คำนี้ email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง"  //error.message
-            error.statusCode = 400;
-            throw error  //โยนค่า errorไป catch เพื่อ next ต่อ
+            const error = new Error('email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง') //.message จะได่ error คำนี้ email ซ้ำ มีคนใช้แล้ว ลองใหม่อีกครั้ง"  //error.message
+            error.statusCode = 400
+            throw error //โยนค่า errorไป catch เพื่อ next ต่อ
         }
 
         user.name = name
